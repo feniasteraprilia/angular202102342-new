@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 
 declare const $ : any ;
 
@@ -12,9 +12,12 @@ export class MahasiswaComponent implements OnInit, AfterViewInit {
   data : any;
   table1: any;
 
-  constructor(private http : HttpClient) { }
+  constructor(private http : HttpClient, private renderer : Renderer2) { }
 
   ngAfterViewInit(): void {
+    this.renderer.removeClass(document.body, "sidebar-open");
+    this.renderer.addClass(document.body, "sidebar-closed");
+    
     this.table1 = $("#table1").DataTable();
 
     this.bind_mahasiswa();
@@ -49,4 +52,4 @@ export class MahasiswaComponent implements OnInit, AfterViewInit {
     })
   }
 
-}
+};
