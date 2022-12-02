@@ -23,17 +23,90 @@ export class MahasiswaComponent implements OnInit, AfterViewInit {
     this.bind_mahasiswa();
   }
 
+  showTambahModal(): void {
+    $("#tambahModal").modal();
+  }
+
+  postRecord(): void{
+    var alamat = $("#alamatText").val();
+    var JenisKelamin = $("#jenisKelaminSelect").val();
+    var jp = $("#jpSelect").val();
+    var nama = $("#namaText").val();
+    var nim = $("#nimText").val();
+    var statusNikah = $("#statusNikahSelect").val();
+    var tahunMasuk = $("#tahunMasukText").val();
+    var tanggalLahir = $("#tanggalLahirText").val();
+    var tempatLahir = $("#tempatLahirText").val();
+
+    if(nim.length == 0){
+      alert("NIM belum diisi")
+      return;
+    }
+    if(nama.length == 0){
+      alert("Nama belum diisi")
+      return;
+    }
+    if(tempatLahir.length == 0){
+      alert("Tempat Lahir belum diisi")
+      return;
+    }
+    if(tanggalLahir.length == 0){
+      alert("Tanggal Lahir belum diisi")
+      return;
+    }
+    if(alamat.length == 0){
+      alert("Alamat belum diisi")
+      return;
+    }
+    if(tahunMasuk.length == 0){
+      alert("Tahun Masuk belum diisi")
+      return;
+    }
+
+    alamat = encodeURIComponent(alamat);
+    nama = encodeURIComponent(nama);
+    nim = encodeURIComponent(nim);
+    tahunMasuk = encodeURIComponent(tahunMasuk);
+    tanggalLahir = encodeURIComponent(tanggalLahir);
+    tempatLahir = encodeURIComponent(tempatLahir);
+    jp = encodeURIComponent(jp);
+    JenisKelamin = encodeURIComponent(JenisKelamin);
+    statusNikah = encodeURIComponent(statusNikah);
+
+    var url = "https://stmikpontianak.net/011100862/tambahMahasiswa.php" +
+    "?alamat=" +alamat+
+    "&jenisKelamin=" +JenisKelamin+
+    "&jp=" +jp+
+    "&nama=" +nama+
+    "&nim=" +nim+
+    "&statusPernikahan=" +statusNikah+
+    "&tahunMasuk=" +tahunMasuk+
+    "&tanggalLahir=" +tanggalLahir+
+    "&tempatLahir=" +tempatLahir;
+
+    this.http.get(url)
+    .subscribe((data:any) => {
+      console.log(data);
+      alert(data.status+" --> "+ data.message);
+
+      this.bind_mahasiswa();
+      $("#tambahModal").modal("hide");
+    });
+  }
+
   ngOnInit(): void {
 
   }
 
-  bind_mahasiswa(): void {
+  bind_mahasiswa(): void{
     this.http.get("https://stmikpontianak.net/011100862/tampilMahasiswa.php")
     .subscribe((data: any) => {
       console.log(data);
 
+      this.table1.clear();
+
       data.forEach((element: any) => {
-        var tempatTanggalLahir = element.TempatLahir + ", " + element.TanggalLahir;
+        var tempatTanggalLahir = element.TempatLahir +", "+ element.TanggalLahir;
 
         var row = [
           element.NIM,
@@ -41,14 +114,15 @@ export class MahasiswaComponent implements OnInit, AfterViewInit {
           element.JenisKelamin,
           tempatTanggalLahir,
           element.JP,
+          element.Alamat,
           element.StatusNikah,
           element.TahunMasuk
         ]
-
         this.table1.row.add(row);
-      });
 
+      });
       this.table1.draw(false);
+
     })
   }
 
